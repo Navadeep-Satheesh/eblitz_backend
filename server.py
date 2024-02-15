@@ -102,7 +102,7 @@ def give_instructions():
     
     return ( jsonify({'current_instruction': directions[0]['instruction'] , 'next_instruction':directions[1]['instruction'], 'distance' : directions[0]['distance']  }), 200) 
 
-socket.run(app, host = "0.0.0.0", debug=True)
+socket.run(app, host = "0.0.0.0", debug=True, port = 8080)
     
 
 
