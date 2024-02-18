@@ -1,10 +1,11 @@
-from flask import Flask , jsonify, request
+from flask import Flask , jsonify, request , session
 import requests 
 import json
 from flask_socketio import SocketIO
 
 
 app = Flask(__name__)
+app['secret_key'] = "fdjjakfjalsdfkladsfasdf"
 
 socket = SocketIO(app  )
 
@@ -72,14 +73,20 @@ def give_instructions():
     # latitude = current_coordinates['latitude']
     # longitude = current_coordinates['longitude']
 
-    latitude = request.args['latitude']
-    longitude =  request.args['longitude']
+    # latitude = request.args['latitude']
+    # longitude =  request.args['longitude']
+
+    latitude = 13.01242054405569
+    longitude = 80.00035241668634
+
+
 
     # print(lat , long)
 
     data_to_send = {
         #  "coordinates" : [[  76.94558537610791 , 8.524691394790976], [76.94545627080134 , 8.523609404305502 ]]
-         "coordinates" : [[ longitude , latitude ], [76.9056140965201,8.546683266584152 ]]
+        #  "coordinates" : [[ longitude , latitude ], [76.9056140965201,8.546683266584152 ]]
+         "coordinates" : [[ longitude , latitude ], [ session['lat'] ,session['long'] ]]
     }
 
     recieved_data = requests.post( url , json = data_to_send, headers=headers)
@@ -101,6 +108,17 @@ def give_instructions():
    
     
     return ( jsonify({'current_instruction': directions[0]['instruction'] , 'next_instruction':directions[1]['instruction'], 'distance' : directions[0]['distance']  }), 200) 
+
+@app.route("/set_destination")
+def setDestination():
+    lat = request.args['lat']
+    long = request.args['long']
+
+    session['lat'] = lat
+    session['long'] = long
+    
+    return ('', 200)
+    
 
 socket.run(app, host = "0.0.0.0", debug=True, port = 8080)
     
